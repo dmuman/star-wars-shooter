@@ -99,7 +99,7 @@ death_fade = ScreenFade(2, PINK, 4)
 # створення кнопок
 start_button = Button(SCREEN_WIDTH // 2 - 130, SCREEN_HEIGHT // 2 + 50, start_img, 1)
 exit_button = Button(SCREEN_WIDTH // 2 - 110, SCREEN_HEIGHT // 2 + 150, exit_img, 1)
-restart_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 50, restart_img, 2)
+restart_button = Button(SCREEN_WIDTH // 2 - 230, SCREEN_HEIGHT // 2 - 50, restart_img, 2)
 
 # головний цикл гри
 run = True

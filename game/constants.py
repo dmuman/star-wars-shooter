@@ -16,7 +16,7 @@ SCREEN_HEIGHT = int(SCREEN_WIDTH * 0.8)
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # визначення ігрових констант
-GRAVITY = 0.75
+GRAVITY = 0.6
 SCROLL_THRESH = 200
 ROWS = 16
 COLS = 150
