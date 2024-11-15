@@ -152,7 +152,7 @@ while run:
 
     # відображення заднього фону, гріду, плиточок
     draw_bg()
-    draw_grid()
+    # draw_grid()
     draw_world()
 
     # додавання тексту
@@ -226,9 +226,9 @@ while run:
                 level += 1
             if event.key == pygame.K_DOWN or event.key == pygame.K_s and level > 0:
                 level -= 1
-            if event.key == pygame.K_LEFT or event.key == pygame.K_d:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                 scroll_left = True
-            if event.key == pygame.K_RIGHT or event.key == pygame.K_a:
+            if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                 scroll_right = True
             # лівий шифт для швидшого скролу
             if event.key == pygame.K_LSHIFT:
@@ -236,9 +236,9 @@ while run:
 
         # якщо клавішу більше не натискають
         if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT or event.key == pygame.K_d:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                 scroll_left = False
-            if event.key == pygame.K_RIGHT or event.key == pygame.K_a:
+            if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                 scroll_right = False
             if event.key == pygame.K_LSHIFT:
                 scroll_speed = 1

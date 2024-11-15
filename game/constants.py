@@ -38,10 +38,10 @@ start_img = pygame.image.load(f'{folder_path}/img/start_btn.png').convert_alpha(
 exit_img = pygame.image.load(f'{folder_path}/img/exit_btn.png').convert_alpha()
 restart_img = pygame.image.load(f'{folder_path}/img/restart_btn.png').convert_alpha()
 #background
-pine1_img = pygame.image.load(f'{folder_path}/img/Background/pine1.png').convert_alpha()
-pine2_img = pygame.image.load(f'{folder_path}/img/Background/pine2.png').convert_alpha()
-mountain_img = pygame.image.load(f'{folder_path}/img/Background/mountain.png').convert_alpha()
-sky_img = pygame.image.load(f'{folder_path}/img/Background/sky_cloud.png').convert_alpha()
+city1_img = pygame.image.load(f'{folder_path}/img/Background/city1.png').convert_alpha()
+city2_img = pygame.image.load(f'{folder_path}/img/Background/city2.png').convert_alpha()
+city_back_img = pygame.image.load(f'{folder_path}/img/Background/city_back.png').convert_alpha()
+sky_img = pygame.image.load(f'{folder_path}/img/Background/sky.png').convert_alpha()
 #store tiles in a list
 img_list = []
 for x in range(TILE_TYPES):
