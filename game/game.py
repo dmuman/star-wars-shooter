@@ -8,7 +8,7 @@ from Grenade import Grenade
 
 pygame.init()
 
-pygame.display.set_caption('Shooter')
+pygame.display.set_caption('Star Pixels: Escape from Coruscant')
 
 #set framerate
 clock = pygame.time.Clock()

@@ -2,7 +2,13 @@ import pygame
 from constants import *
 
 class Explosion(pygame.sprite.Sprite):
+	"""
+	Клас вибуху гранати
+	"""
 	def __init__(self, x, y, scale):
+		"""
+		Ініціалізація
+		"""
 		pygame.sprite.Sprite.__init__(self)
 		self.images = []
 		for num in range(1, 6):
@@ -17,17 +23,20 @@ class Explosion(pygame.sprite.Sprite):
 
 
 	def update(self, screen_scroll):
-		#scroll
+		"""
+		Оновлення зображення
+		"""
+		# при скролі
 		self.rect.x += screen_scroll
 
 		EXPLOSION_SPEED = 4
-		#update explosion amimation
+		# оновлення анімації вибуху
 		self.counter += 1
 
 		if self.counter >= EXPLOSION_SPEED:
 			self.counter = 0
 			self.frame_index += 1
-			#if the animation is complete then delete the explosion
+			# якщо анімація закінчилась - можна видалити вибух
 			if self.frame_index >= len(self.images):
 				self.kill()
 			else:

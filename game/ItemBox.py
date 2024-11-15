@@ -2,7 +2,13 @@ import pygame
 from constants import *
 
 class ItemBox(pygame.sprite.Sprite):
+	"""
+	Клас для коробочок, які персонаж може взяти
+	"""
 	def __init__(self, item_type, x, y):
+		"""
+		Ініціалізація
+		"""
 		pygame.sprite.Sprite.__init__(self)
 		self.item_type = item_type
 		self.image = item_boxes[self.item_type]
@@ -11,11 +17,14 @@ class ItemBox(pygame.sprite.Sprite):
 
 
 	def update(self, screen_scroll, player):
-		#scroll
+		"""
+		Оновлення зображення
+		"""
+		# при скролі
 		self.rect.x += screen_scroll
-		#check if the player has picked up the box
+		# перевірка, чи персонаж підняв коробочку
 		if pygame.sprite.collide_rect(self, player):
-			#check what kind of box it was
+			# перевірка типу коробочки
 			if self.item_type == 'Health':
 				player.health += 25
 				if player.health > player.max_health:
@@ -24,5 +33,5 @@ class ItemBox(pygame.sprite.Sprite):
 				player.ammo += 15
 			elif self.item_type == 'Grenade':
 				player.grenades += 3
-			#delete the item box
+			# видаленя коробочки
 			self.kill()

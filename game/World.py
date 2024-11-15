@@ -7,12 +7,21 @@ from ItemBox import ItemBox
 from Exit import Exit
 
 class World():
+	"""
+	Клас для світу
+	"""
 	def __init__(self):
+		"""
+		Ініціалізація
+		"""
 		self.obstacle_list = []
 
 	def process_data(self, data):
+		"""
+		Функція для обробки даних
+		"""
 		self.level_length = len(data[0])
-		#iterate through each value in level data file
+		# ітерація через кожен елемент в файлі з даними
 		for y, row in enumerate(data):
 			for x, tile in enumerate(row):
 				if tile >= 0:
@@ -29,22 +38,22 @@ class World():
 					elif tile >= 11 and tile <= 14:
 						decoration = Decoration(img, x * TILE_SIZE, y * TILE_SIZE)
 						decoration_group.add(decoration)
-					elif tile == 15:#create player
+					elif tile == 15: # створення гравця
 						player = Soldier('player', x * TILE_SIZE, y * TILE_SIZE, 1.65, 5, 20, 5)
 						health_bar = HealthBar(10, 10, player.health, player.health)
-					elif tile == 16:#create enemies
+					elif tile == 16: # створення ворогів
 						enemy = Soldier('enemy', x * TILE_SIZE, y * TILE_SIZE, 1.65, 2, 20, 0)
 						enemy_group.add(enemy)
-					elif tile == 17:#create ammo box
+					elif tile == 17: # створення коробочки з патронами
 						item_box = ItemBox('Ammo', x * TILE_SIZE, y * TILE_SIZE)
 						item_box_group.add(item_box)
-					elif tile == 18:#create grenade box
+					elif tile == 18: # створення коробочки з гранатами
 						item_box = ItemBox('Grenade', x * TILE_SIZE, y * TILE_SIZE)
 						item_box_group.add(item_box)
-					elif tile == 19:#create health box
+					elif tile == 19: # створення коробочки зі здоров'ям
 						item_box = ItemBox('Health', x * TILE_SIZE, y * TILE_SIZE)
 						item_box_group.add(item_box)
-					elif tile == 20:#create exit
+					elif tile == 20: # створення виходу
 						exit = Exit(img, x * TILE_SIZE, y * TILE_SIZE)
 						exit_group.add(exit)
 
@@ -52,6 +61,9 @@ class World():
 
 
 	def draw(self, screen_scroll):
+		"""
+		Функція для відображення
+		"""
 		for tile in self.obstacle_list:
 			tile[1][0] += screen_scroll
 			screen.blit(tile[0], tile[1])

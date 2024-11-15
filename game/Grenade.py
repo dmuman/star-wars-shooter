@@ -3,7 +3,13 @@ from constants import *
 from Explosion import Explosion
 
 class Grenade(pygame.sprite.Sprite):
+	"""
+	Клас для гранати
+	"""
 	def __init__(self, x, y, direction):
+		"""
+		Ініціалізація
+		"""
 		pygame.sprite.Sprite.__init__(self)
 		self.timer = 100
 		self.vel_y = -11
@@ -16,41 +22,45 @@ class Grenade(pygame.sprite.Sprite):
 		self.direction = direction
 
 	def update(self, screen_scroll, world, player):
+		"""
+		Оновлення зображення
+		"""
+		# застосування фізики
 		self.vel_y += GRAVITY
 		dx = self.direction * self.speed
 		dy = self.vel_y
 
-		#check for collision with level
+		# перевірка колізії з елементами рівня
 		for tile in world.obstacle_list:
-			#check collision with walls
+			# перевірка колізії зі стінами
 			if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
 				self.direction *= -1
 				dx = self.direction * self.speed
-			#check for collision in the y direction
+			# перевірка колізії у напрямку y
 			if tile[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
 				self.speed = 0
-				#check if below the ground, i.e. thrown up
+				# якщо гнаната нижче землі, тобто кинута
 				if self.vel_y < 0:
 					self.vel_y = 0
 					dy = tile[1].bottom - self.rect.top
-				#check if above the ground, i.e. falling
+				# якщо вище, тобто падає
 				elif self.vel_y >= 0:
 					self.vel_y = 0
 					dy = tile[1].top - self.rect.bottom	
 
 
-		#update grenade position
+		# оновлення позиції гранати
 		self.rect.x += dx + screen_scroll
 		self.rect.y += dy
 
-		#countdown timer
+		# зворотній відлік
 		self.timer -= 1
 		if self.timer <= 0:
 			self.kill()
 			grenade_fx.play()
 			explosion = Explosion(self.rect.x, self.rect.y, 0.5)
 			explosion_group.add(explosion)
-			#do damage to anyone that is nearby
+			# наносити шкоду усім, хто поруч
 			if abs(self.rect.centerx - player.rect.centerx) < TILE_SIZE * 2 and \
 				abs(self.rect.centery - player.rect.centery) < TILE_SIZE * 2:
 				player.health -= 50

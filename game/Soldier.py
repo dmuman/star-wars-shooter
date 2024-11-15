@@ -4,7 +4,14 @@ from constants import *
 import random
 
 class Soldier(pygame.sprite.Sprite):
+	"""
+	Клас для солдата, який буде використано 
+	як для гравця, так і для противника
+	"""
 	def __init__(self, char_type, x, y, scale, speed, ammo, grenades):
+		"""
+		Ініціалізація об'єкту
+		"""
 		pygame.sprite.Sprite.__init__(self)
 		self.alive = True
 		self.char_type = char_type
@@ -24,18 +31,18 @@ class Soldier(pygame.sprite.Sprite):
 		self.frame_index = 0
 		self.action = 0
 		self.update_time = pygame.time.get_ticks()
-		#ai specific variables
+		# змінні для ШІ
 		self.move_counter = 0
 		self.vision = pygame.Rect(0, 0, 150, 20)
 		self.idling = False
 		self.idling_counter = 0
 		
-		#load all images for the players
+		# завантаження всіх необхідних зображень для гравця
 		animation_types = ['Idle', 'Run', 'Jump', 'Death']
 		for animation in animation_types:
-			#reset temporary list of images
+			# скидання тимчасового списку картинок
 			temp_list = []
-			#count number of files in the folder
+			# прорахунок кількості об'єктів в папці (кількість кадрів)
 			num_of_frames = len(os.listdir(f'{folder_path}/img/{self.char_type}/{animation}'))
 			for i in range(num_of_frames):
 				img = pygame.image.load(f'{folder_path}/img/{self.char_type}/{animation}/{i}.png').convert_alpha()
@@ -51,20 +58,26 @@ class Soldier(pygame.sprite.Sprite):
 
 
 	def update(self):
+		"""
+		Оновлення анімація
+		"""
 		self.update_animation()
 		self.check_alive()
-		#update cooldown
+		# оновлення кулдауну
 		if self.shoot_cooldown > 0:
 			self.shoot_cooldown -= 1
 
 
 	def move(self, moving_left, moving_right, bg_scroll, world):
-		#reset movement variables
+		"""
+		Функція для руху
+		"""
+		# скидання змінних руху
 		screen_scroll = 0
 		dx = 0
 		dy = 0
 
-		#assign movement variables if moving left or right
+		# оновлення змінних руху в залежності від напрямку
 		if moving_left:
 			dx = -self.speed
 			self.flip = True
@@ -74,64 +87,64 @@ class Soldier(pygame.sprite.Sprite):
 			self.flip = False
 			self.direction = 1
 
-		#jump
+		# стрибок
 		if self.jump == True and self.in_air == False:
 			self.vel_y = -11
 			self.jump = False
 			self.in_air = True
 
-		#apply gravity
+		# застосування гравітації
 		self.vel_y += GRAVITY
 		if self.vel_y > 10:
 			self.vel_y
 		dy += self.vel_y
 
-		#check for collision
+		# перевірка колізії
 		for tile in world.obstacle_list:
-			#check collision in the x direction
+			# перевірка колізії у напрямку х
 			if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
 				dx = 0
-				#if the ai has hit a wall then make it turn around
+				# якщо ШІ вдарився об стінку, то він повернеться в інший бік
 				if self.char_type == 'enemy':
 					self.direction *= -1
 					self.move_counter = 0
-			#check for collision in the y direction
+			# перевірка колізії у напрямку у
 			if tile[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
-				#check if below the ground, i.e. jumping
+				# перевірка на те, чи нижче землі, тобто стрибок
 				if self.vel_y < 0:
 					self.vel_y = 0
 					dy = tile[1].bottom - self.rect.top
-				#check if above the ground, i.e. falling
+				# на те, чи вище, тобто падіння
 				elif self.vel_y >= 0:
 					self.vel_y = 0
 					self.in_air = False
 					dy = tile[1].top - self.rect.bottom
 
 
-		#check for collision with water
+		# перевірка на колізію з водою
 		if pygame.sprite.spritecollide(self, water_group, False):
 			self.health = 0
 
-		#check for collision with exit
+		# перевірка на колізію з виходом
 		level_complete = False
 		if pygame.sprite.spritecollide(self, exit_group, False):
 			level_complete = True
 
-		#check if fallen off the map
+		# якщо випав з карти
 		if self.rect.bottom > SCREEN_HEIGHT:
 			self.health = 0
 
 
-		#check if going off the edges of the screen
+		# перевірка, чи не виходить за межі екрану
 		if self.char_type == 'player':
 			if self.rect.left + dx < 0 or self.rect.right + dx > SCREEN_WIDTH:
 				dx = 0
 
-		#update rectangle position
+		# оновлення позиції
 		self.rect.x += dx
 		self.rect.y += dy
 
-		#update scroll based on player position
+		# оновлення скролу в залежності від позиціх гравця
 		if self.char_type == 'player':
 			if (self.rect.right > SCREEN_WIDTH - SCROLL_THRESH and bg_scroll < (world.level_length * TILE_SIZE) - SCREEN_WIDTH)\
 				or (self.rect.left < SCROLL_THRESH and bg_scroll > abs(dx)):
@@ -143,27 +156,33 @@ class Soldier(pygame.sprite.Sprite):
 
 
 	def shoot(self):
+		"""
+		Функція для пострілу
+		"""
 		from Bullet import Bullet
 		if self.shoot_cooldown == 0 and self.ammo > 0:
 			self.shoot_cooldown = 20
 			bullet = Bullet(self.rect.centerx + (0.75 * self.rect.size[0] * self.direction), self.rect.centery, self.direction)
 			bullet_group.add(bullet)
-			#reduce ammo
+			# зменшення кількості патронів
 			self.ammo -= 1
 			shot_fx.play()
 
 
 	def ai(self, screen_scroll, player, bg_scroll, world):
+		"""
+		Функція для ШІ
+		"""
 		if self.alive and player.alive:
 			if self.idling == False and random.randint(1, 200) == 1:
-				self.update_action(0)#0: idle
+				self.update_action(0) #0: idle
 				self.idling = True
 				self.idling_counter = 50
-			#check if the ai in near the player
+			# перевірка, чи боти біля гравця
 			if self.vision.colliderect(player.rect):
-				#stop running and face the player
-				self.update_action(0)#0: idle
-				#shoot
+				# зупинка бігу й поворот в бік гравця
+				self.update_action(0) #0: idle
+				# постріл
 				self.shoot()
 			else:
 				if self.idling == False:
@@ -173,9 +192,9 @@ class Soldier(pygame.sprite.Sprite):
 						ai_moving_right = False
 					ai_moving_left = not ai_moving_right
 					self.move(ai_moving_left, ai_moving_right, bg_scroll, world)
-					self.update_action(1)#1: run
+					self.update_action(1) #1: run
 					self.move_counter += 1
-					#update ai vision as the enemy moves
+					# оновлення зору ботів, коли вони рухаються
 					self.vision.center = (self.rect.centerx + 75 * self.direction, self.rect.centery)
 
 					if self.move_counter > TILE_SIZE:
@@ -186,20 +205,23 @@ class Soldier(pygame.sprite.Sprite):
 					if self.idling_counter <= 0:
 						self.idling = False
 
-		#scroll
+		# скрол
 		self.rect.x += screen_scroll
 
 
 	def update_animation(self):
-		#update animation
+		"""
+		Оновленнч анімації
+		"""
+		# оновлення анімації
 		ANIMATION_COOLDOWN = 100
-		#update image depending on current frame
+		# оновлення картинки в залежності від кадру
 		self.image = self.animation_list[self.action][self.frame_index]
-		#check if enough time has passed since the last update
+		# перевірка, чи пройшло достатньо часу з минулого оновлення
 		if pygame.time.get_ticks() - self.update_time > ANIMATION_COOLDOWN:
 			self.update_time = pygame.time.get_ticks()
 			self.frame_index += 1
-		#if the animation has run out the reset back to the start
+		# якщо анімація кінчилась - почати її спочатку
 		if self.frame_index >= len(self.animation_list[self.action]):
 			if self.action == 3:
 				self.frame_index = len(self.animation_list[self.action]) - 1
@@ -209,16 +231,22 @@ class Soldier(pygame.sprite.Sprite):
 
 
 	def update_action(self, new_action):
-		#check if the new action is different to the previous one
+		"""
+		Оновлення дій
+		"""
+		# перевірка, чи теперішня дія відрізняється від попередньої
 		if new_action != self.action:
 			self.action = new_action
-			#update the animation settings
+			# оновлення налаштувань анімації
 			self.frame_index = 0
 			self.update_time = pygame.time.get_ticks()
 
 
 
 	def check_alive(self):
+		"""
+		Перевірка на те, чи живий
+		"""
 		if self.health <= 0:
 			self.health = 0
 			self.speed = 0
@@ -227,4 +255,7 @@ class Soldier(pygame.sprite.Sprite):
 
 
 	def draw(self):
+		"""
+		Відображення
+		"""
 		screen.blit(pygame.transform.flip(self.image, self.flip, False), self.rect)

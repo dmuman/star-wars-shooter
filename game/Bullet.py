@@ -2,7 +2,13 @@ import pygame
 from constants import *
 
 class Bullet(pygame.sprite.Sprite):
+	"""
+	Клас для кулі
+	"""
 	def __init__(self, x, y, direction):
+		"""
+		Ініціалізація
+		"""
 		pygame.sprite.Sprite.__init__(self)
 		self.speed = 10
 		self.image = bullet_img
@@ -11,17 +17,20 @@ class Bullet(pygame.sprite.Sprite):
 		self.direction = direction
 
 	def update(self, screen_scroll, world, player):
-		#move bullet
+		"""
+		Оновлення
+		"""
+		# рух кулі
 		self.rect.x += (self.direction * self.speed) + screen_scroll
-		#check if bullet has gone off screen
+		# перевірка, чи куля вилетіла за екран
 		if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH:
 			self.kill()
-		#check for collision with level
+		# перевірка колізії з елементами рівня
 		for tile in world.obstacle_list:
 			if tile[1].colliderect(self.rect):
 				self.kill()
 
-		#check collision with characters
+		# перевірка колізії з персонажами
 		if pygame.sprite.spritecollide(player, bullet_group, False):
 			if player.alive:
 				player.health -= 5
