@@ -33,6 +33,9 @@ grenade_fx = pygame.mixer.Sound(f'{folder_path}/audio/grenade.wav')
 grenade_fx.set_volume(0.05)
 
 # завантаження зображень
+# меню
+menu_img = pygame.image.load(f'{folder_path}/img/menu.png').convert_alpha()
+logo_img = pygame.image.load(f'{folder_path}/img/logo.png').convert_alpha()
 # картинки кнопок
 start_img = pygame.image.load(f'{folder_path}/img/start_btn.png').convert_alpha()
 exit_img = pygame.image.load(f'{folder_path}/img/exit_btn.png').convert_alpha()
